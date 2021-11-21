@@ -112,10 +112,9 @@ public class Flight {
 		this.ci_counters = ci_counters;
 	}
 	
-	public void setArrival(LocalDateTime scheduledDT, int terminal, List<String> gates, LocalDateTime estDT) {
+	public void setArrival(LocalDateTime scheduledDT, int terminal, LocalDateTime estDT) {
 		this.scheduledDT = scheduledDT;
 		this.terminal = terminal;
-		this.gates = gates;
 		this.estDT = estDT;
 	}
 	
