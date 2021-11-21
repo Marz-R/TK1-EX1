@@ -110,6 +110,8 @@ public class Flight {
 	public void setCheckIn(int ci_location, List<Integer> ci_counters, LocalDateTime ci_start, LocalDateTime ci_end) {
 		this.ci_location = ci_location;
 		this.ci_counters = ci_counters;
+		this.ci_start = ci_start;
+		this.ci_end = ci_end;
 	}
 	
 	public void setArrival(LocalDateTime scheduledDT, int terminal, LocalDateTime estDT) {
