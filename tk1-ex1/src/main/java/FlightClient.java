@@ -3,20 +3,30 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+
 import interfaces.IFlightClient;
 import interfaces.IFlightServer;
 import model.Flight;
+import gui.FlightListGUI;
 
-public class FlightClient implements IFlightClient {
+public class FlightClient extends UnicastRemoteObject implements IFlightClient {
 
 	private static Logger logger = Logger.getLogger(FlightServer.class.getName());
 
 	// ui
+	private FlightListGUI flightListGUI;
 
 	// global state
+	private String clientName;
+	private IFlightServer flightServer;
 
-	public FlightClient(String clientName) {
-		
+	public FlightClient(String clientName) throws RemoteException {
+		this.clientName = clientName;
 	}
 
 	@Override
@@ -28,12 +38,31 @@ public class FlightClient implements IFlightClient {
 	public void receiveUpdatedFlight(Flight flight, boolean deleted) {
 		logger.log(Level.INFO, "Flight updated: " + flight.toString());
 	}
-
-	public void startup() {
-
+	
+	public void updateFlight() {
+		
+	}
+	
+	public void deleteFlight() {
+		
 	}
 
-	public static void main(String[] args) {
+	public void logout() {
+		flightServer.logout(clientName);
+	}
+	
+	public void startup() throws RemoteException, NotBoundException {
+		this.flightListGUI = new FlightListGUI();
+		flightListGUI.setFlightClient(this);
+		
+		Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
+		IFlightServer flightServer = (IFlightServer) registry.lookup("server");
+		this.flightServer = flightServer;
+		
+		flightServer.login(clientName, this);
+	}
+
+	public static void main(String[] args) throws RemoteException, NotBoundException {
 		FlightClient client = new FlightClient(UUID.randomUUID().toString());
 		client.startup();
 	}

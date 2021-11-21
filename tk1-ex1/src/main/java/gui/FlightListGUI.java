@@ -1,5 +1,8 @@
 package gui;
 
+import interfaces.IFlightClient;
+import model.Flight;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -8,9 +11,15 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.List;
+import java.awt.event.WindowAdapter;
 
 public class FlightListGUI {
 
+	private IFlightClient flightClient;
+	private List<Flight> flights;
 	private JFrame frmTkAirportArrivals;
 	private JTable flightListTable;
 
@@ -42,6 +51,12 @@ public class FlightListGUI {
 	 */
 	private void initialize() {
 		frmTkAirportArrivals = new JFrame();
+		frmTkAirportArrivals.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				
+			}
+		});
 		frmTkAirportArrivals.setTitle("TK Airport Arrivals / Departures");
 		frmTkAirportArrivals.setBounds(100, 100, 957, 636);
 		frmTkAirportArrivals.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,15 +67,19 @@ public class FlightListGUI {
 		frmTkAirportArrivals.getContentPane().add(scrollPane);
 		
 		flightListTable = new JTable();
+		Object[][] rows = new Object[flights.size()][9];
+		for (int i = 0; i < flights.size(); i++) {
+			rows[i][0] = flights.get(i).airline;
+		}
 		flightListTable.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
-				"Operating Airline", "IATA Code", "Tracking Number", "Departure", "Arrival", "Terminal", "Scheduled Depature", "Estimated Departure", "Scheduled Arrival", "Estimated Arrival"
+				"Operating Airline", "Flight Number", "Departure", "Arrival", "Terminal", "Scheduled Depature", "Estimated Departure", "Scheduled Arrival", "Estimated Arrival"
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-				String.class, String.class, String.class, String.class, String.class, Integer.class, Object.class, Object.class, Object.class, Object.class
+				String.class, String.class, String.class, String.class, Integer.class, Object.class, Object.class, Object.class, Object.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -82,6 +101,14 @@ public class FlightListGUI {
 		deleteButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
 		deleteButton.setBounds(525, 564, 103, 30);
 		frmTkAirportArrivals.getContentPane().add(deleteButton);
+	}
+	
+	public void setFlightClient(IFlightClient flightClient) {
+		this.flightClient = flightClient;
+	}
+	
+	public void setListOfFlights(List<Flight> flights) {
+		this.flights = flights;
 	}
 
 }
