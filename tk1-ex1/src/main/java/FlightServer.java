@@ -14,11 +14,16 @@ public class FlightServer implements IFlightServer {
 		super();
 
 		// initialize with some flights
-		Flight flight1 = new Flight();
+		Flight flight1 = new Flight("LH1234");
+		List<Integer> counters = Arrays.asList(100, 101, 102, 103, 014, 105);
+		List<String> gates = Arrays.asList("E12", "E13");
+		flight1.setFlightInfo("Lufthansa", "A380", true, LocalDate.of(2021, 11, 24), "FRA", "HKG");
+		flight1.setDeparture(LocalDateTime.of(2021, 11, 24, 05, 12), 1, gates);
+		flight1.setCheckIn(3, counters, LocalDateTime.of(2021, 11, 24, 00, 00), LocalDateTime.of(2021, 11, 24, 04, 42));
 		
-
-		Flight flight2 = new Flight();
-		
+		Flight flight2 = new Flight("CX4321");
+		flight2.setFlightInfo("Cathy", "B747", false, LocalDate.of(2021, 11, 25), "LAX", "FRA");
+		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, LocalDateTime.of(2021, 11, 25, 15, 43));
 		// ...
 	}
 
