@@ -12,7 +12,7 @@ import java.awt.Font;
 public class FlightListGUI {
 
 	private JFrame frmTkAirportArrivals;
-	private JTable table;
+	private JTable flightListTable;
 
 	/**
 	 * Launch the application.
@@ -51,8 +51,8 @@ public class FlightListGUI {
 		scrollPane.setBounds(10, 10, 923, 528);
 		frmTkAirportArrivals.getContentPane().add(scrollPane);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
+		flightListTable = new JTable();
+		flightListTable.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
@@ -66,22 +66,22 @@ public class FlightListGUI {
 				return columnTypes[columnIndex];
 			}
 		});
-		scrollPane.setViewportView(table);
+		scrollPane.setViewportView(flightListTable);
 		
-		JButton NewButton = new JButton("New");
-		NewButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
-		NewButton.setBounds(298, 564, 103, 30);
-		frmTkAirportArrivals.getContentPane().add(NewButton);
+		JButton newButton = new JButton("New");
+		newButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
+		newButton.setBounds(298, 564, 103, 30);
+		frmTkAirportArrivals.getContentPane().add(newButton);
 		
-		JButton EditButton = new JButton("Edit");
-		EditButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
-		EditButton.setBounds(411, 564, 103, 30);
-		frmTkAirportArrivals.getContentPane().add(EditButton);
+		JButton editButton = new JButton("Edit");
+		editButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
+		editButton.setBounds(411, 564, 103, 30);
+		frmTkAirportArrivals.getContentPane().add(editButton);
 		
-		JButton DeleteButton = new JButton("Delete");
-		DeleteButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
-		DeleteButton.setBounds(525, 564, 103, 30);
-		frmTkAirportArrivals.getContentPane().add(DeleteButton);
+		JButton deleteButton = new JButton("Delete");
+		deleteButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
+		deleteButton.setBounds(525, 564, 103, 30);
+		frmTkAirportArrivals.getContentPane().add(deleteButton);
 	}
 
 }
