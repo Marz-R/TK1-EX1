@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -58,6 +59,14 @@ public class FlightListGUI {
 			@Override
 			public void windowOpened(WindowEvent e) {
 				
+			}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				try {
+					flightClient.logout();
+				} catch (RemoteException re) {
+					re.printStackTrace();
+				}
 			}
 		});
 		frmTkAirportArrivals.setTitle("TK Airport Arrivals / Departures");
@@ -106,20 +115,47 @@ public class FlightListGUI {
 		this.flightClient = flightClient;
 	}
 	
+	// set flights when the GUI was initially called (when client logged into server)
 	public void setListOfFlights(List<Flight> flights) {
 		this.flights = flights;
 		DefaultTableModel model = (DefaultTableModel) flightListTable.getModel();
-		for (int i = 0; i < flights.size(); i++) {
+		
+		for (Flight flight : flights) {
 			model.addRow(new Object[] {
-					flights.get(i).getAirline(),
-					flights.get(i).getFlightNum(),
-					flights.get(i).getD_airport(),
-					flights.get(i).getA_airport(),
-					flights.get(i).getTerminal(),
-					flights.get(i).getScheduledDT(),
-					flights.get(i).getEstDT()
+					flight.getAirline(),
+					flight.getFlightNum(),
+					flight.getD_airport(),
+					flight.getA_airport(),
+					flight.getTerminal(),
+					flight.getScheduledDT(),
+					flight.getEstDT()
 					});
 		}
+		
+		model.fireTableDataChanged();
+	}
+	
+	public void setUpdatedFlight(Flight flight, char operation) {
+		DefaultTableModel model = (DefaultTableModel) flightListTable.getModel();
+		
+		// for now, assume no operation value other than C, U, and D will be assigned
+		switch(operation) {
+		 	case 'C':  // create
+		 		flights.add(flight);
+		 		break;
+		 	case 'U':  // update
+		 		for (Flight f : flights) {
+					if (f.getFlightNum() == flight.getFlightNum()) {  // assume flight number can function as the primary key
+						flights.set(flights.indexOf(f), flight);  // replace (i.e. update) existing flight data that have the same flight number with the received flight data
+						break;
+					}
+				}
+		 		break;
+		 	case 'D':  // delete
+		 		flights.remove(flights.indexOf(flight));
+		 		break;
+		}
+		
 		model.fireTableDataChanged();
 	}
 

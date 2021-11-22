@@ -8,8 +8,10 @@ import model.Flight;
 
 public interface IFlightClient extends Remote {
 	
+	public void logout() throws RemoteException;
+	
 	public void receiveListOfFlights(List<Flight> flights) throws RemoteException;
 	
-	public void receiveUpdatedFlight(Flight flight, boolean deleted) throws RemoteException;
+	public void receiveUpdatedFlight(Flight flight, char operation) throws RemoteException;
 
 }

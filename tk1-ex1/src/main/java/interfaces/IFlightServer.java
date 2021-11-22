@@ -9,11 +9,11 @@ public interface IFlightServer extends Remote {
 
 	public void login(String clientName, IFlightClient client) throws RemoteException;
 
-	public void logout(String clientName) throws RemoteException;
+	public void logout(String clientName, IFlightClient client) throws RemoteException;
 	
-	public void createFlight(String clientName, Flight flight) throws RemoteException;
+	public void createFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException;
 
-	public void updateFlight(String clientName, Flight flight) throws RemoteException;
+	public void updateFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException;
 	
-	public void deleteFlight(String clientName, Flight flight) throws RemoteException;
+	public void deleteFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException;
 }

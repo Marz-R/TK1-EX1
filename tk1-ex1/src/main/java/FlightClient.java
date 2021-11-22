@@ -36,16 +36,13 @@ public class FlightClient extends UnicastRemoteObject implements IFlightClient {
 	}
 
 	@Override
-	public void receiveUpdatedFlight(Flight flight, boolean deleted) {
+	public void receiveUpdatedFlight(Flight flight, char operation) {
 		logger.log(Level.INFO, "Flight updated: " + flight.toString());
+		flightListGUI.setUpdatedFlight(flight, operation);
 	}
 	
-	public void updateFlight() {
-		
-	}
-	
-	public void deleteFlight() {
-		
+	public void sendUpdatedFlight(Flight flight, boolean deleted) {
+		// called by GUI; send updated flight to server (call update/delete Flight function in FlightServer depending on value of deleted)
 	}
 
 	public void logout() throws RemoteException {

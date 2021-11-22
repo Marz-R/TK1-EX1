@@ -26,7 +26,7 @@ public class FlightServer extends UnicastRemoteObject implements IFlightServer {
 
 	private static Logger logger = Logger.getLogger(FlightServer.class.getName());
 
-	private List<String> loggedInClients = new ArrayList<String>();
+	private List<IFlightClient> loggedInClients = new ArrayList<IFlightClient>();
 	private List<Flight> flights = new ArrayList<Flight>();
 
 	protected FlightServer() throws RemoteException{
@@ -43,64 +43,82 @@ public class FlightServer extends UnicastRemoteObject implements IFlightServer {
 		Flight flight2 = new Flight("CX4321");
 		flight2.setFlightInfo("Cathy Pacific", "B747", false, LocalDate.of(2021, 11, 25), "LAX", "FRA");
 		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, LocalDateTime.of(2021, 11, 25, 15, 43));
-		
+
 		flights.add(flight1);
 		flights.add(flight2);
 	}
 
 	@Override
-	public void login(String clientName, IFlightClient client) throws RemoteException{
-		if (loggedInClients.contains(clientName)) {
+	public void login(String clientName, IFlightClient client) throws RemoteException {
+		if (loggedInClients.contains(client)) {
 			logger.log(Level.INFO, clientName + "has already logged in.");
 		} else {
-			loggedInClients.add(clientName); //if client haven't logged in, add to list
+			loggedInClients.add(client);  // if client haven't logged in, add to list
 			logger.log(Level.INFO, "New client logged in: " + clientName);
-			client.receiveListOfFlights(this.flights);
+			
+			client.receiveListOfFlights(this.flights);  // send client current list of flights
 		}		
 	}
 
 	@Override
-	public void logout(String clientName) throws RemoteException{
-		if (loggedInClients.contains(clientName)) {
-			loggedInClients.remove(clientName);
+	public void logout(String clientName, IFlightClient client) throws RemoteException {
+		if (loggedInClients.contains(client)) {
+			loggedInClients.remove(client);
 			logger.log(Level.INFO, "Client logged out: " + clientName);
 		} else {
 			logger.log(Level.INFO, clientName + "doesn't exist.");
 		}
-		
 	}
 	
 	@Override
-	public void createFlight(String clientName, Flight flight) throws RemoteException{
-		if (loggedInClients.contains(clientName)) {
+	public void createFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException{
+		if (loggedInClients.contains(client)) {
 			flights.add(flight);
-			logger.log(Level.INFO, "Created flight: " + flight.toString());
+			
+			logger.log(Level.INFO, "Created flight: " + flight.toString() + "by " + clientName);
+			informAllClients(flight, 'C');
 		} else {
-			logger.log(Level.INFO, "Invalid client.");
+			logger.log(Level.INFO, "Invalid client: " + clientName);
 		}
 	}
 
 	@Override
-	public void updateFlight(String clientName, Flight flight) throws RemoteException{
-		if (loggedInClients.contains(clientName)) {
-			logger.log(Level.INFO, "Update flight: " + flight.toString());
+	public void updateFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException{
+		if (loggedInClients.contains(client)) {
+			for (Flight f : flights) {
+				if (f.getFlightNum() == flight.getFlightNum()) {  // assume flight number can function as the primary key
+					flights.set(flights.indexOf(f), flight);  // replace (i.e. update) existing flight data that have the same flight number with the received flight data
+					break;
+				}
+			}
+			
+			logger.log(Level.INFO, "Updated flight: " + flight.toString() + "by " + clientName);
+			informAllClients(flight, 'U');
 		} else {
-			logger.log(Level.INFO, "Invalid client.");
+			logger.log(Level.INFO, "Invalid client: " + clientName);
 		}
 	}
 
 	@Override
-	public void deleteFlight(String clientName, Flight flight) throws RemoteException{
-		if (loggedInClients.contains(clientName)) {
-			logger.log(Level.INFO, "Delete flight: " + flight.toString());
+	public void deleteFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException{
+		if (loggedInClients.contains(client)) {
+			flights.remove(flights.indexOf(flight));
+			
+			logger.log(Level.INFO, "Deleted flight: " + flight.toString() + "by " + clientName);
+			informAllClients(flight, 'D');
 		} else {
-			logger.log(Level.INFO, "Invalid client.");
+			logger.log(Level.INFO, "Invalid client: " + clientName);
 		}	
 	}
 
-	private void informAllClients(Flight flight, boolean deleted) throws RemoteException{
-		//what is this for?
-		
+	// operation:
+	// C: create
+	// U: update
+	// D: delete
+	private void informAllClients(Flight flight, char operation) throws RemoteException{
+		for (IFlightClient client : loggedInClients) {
+			client.receiveUpdatedFlight(flight, operation);
+		}
 	}
 
 	public static void main(String[] args) {
