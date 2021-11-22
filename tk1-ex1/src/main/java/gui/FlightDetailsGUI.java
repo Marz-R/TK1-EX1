@@ -5,7 +5,19 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
 import javax.swing.JTextField;
+
+import model.Flight;
+import interfaces.IFlightServer;
+
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.GroupLayout;
@@ -33,6 +45,7 @@ public class FlightDetailsGUI {
 	private JTextField arrivalGatesTxtField;
 	private JTextField estimatedArrivalTxtField;
 	private JTextField checkInEndTxtField;
+	private JComboBox flightStatusComboBox;
 
 	/**
 	 * Launch the application.
@@ -41,7 +54,7 @@ public class FlightDetailsGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					FlightDetailsGUI window = new FlightDetailsGUI();
+					FlightDetailsGUI window = new FlightDetailsGUI(true);// true when create, false when edit
 					window.frmFlightDetails.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,14 +66,14 @@ public class FlightDetailsGUI {
 	/**
 	 * Create the application.
 	 */
-	public FlightDetailsGUI() {
-		initialize();
+	public FlightDetailsGUI(boolean create) {
+		initialize(create);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize(boolean create) {
 		frmFlightDetails = new JFrame();
 		frmFlightDetails.setTitle("Flight Details");
 		frmFlightDetails.setBounds(100, 100, 945, 661);
@@ -128,12 +141,18 @@ public class FlightDetailsGUI {
 		
 		IATATxtField = new JTextField();
 		IATATxtField.setColumns(10);
+		if(!create) {
+			IATATxtField.setEditable(false); //set false if edit
+		}
 		
 		aircraftModelNameTxtField = new JTextField();
 		aircraftModelNameTxtField.setColumns(10);
 		
 		trackingNumberTxtField = new JTextField();
 		trackingNumberTxtField.setColumns(10);
+		if(!create) {
+			trackingNumberTxtField.setEditable(false); //set false if edit
+		}
 		
 		departureAirportTxtField = new JTextField();
 		departureAirportTxtField.setColumns(10);
@@ -164,6 +183,9 @@ public class FlightDetailsGUI {
 		
 		operatingAirlineTxtField = new JTextField();
 		operatingAirlineTxtField.setColumns(10);
+		if(!create) {
+			operatingAirlineTxtField.setEditable(false); //set false if edit
+		}
 		
 		arrivalAirportTxtField = new JTextField();
 		arrivalAirportTxtField.setColumns(10);
@@ -183,7 +205,7 @@ public class FlightDetailsGUI {
 		checkInEndTxtField = new JTextField();
 		checkInEndTxtField.setColumns(10);
 		
-		JComboBox flightStatusComboBox = new JComboBox();
+		flightStatusComboBox = new JComboBox();
 		flightStatusComboBox.addItem("-");
 		flightStatusComboBox.addItem("B");
 		flightStatusComboBox.addItem("D");
@@ -428,4 +450,44 @@ public class FlightDetailsGUI {
 						.addComponent(saveButton, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)))
 		);
 	}
+	
+	public void getEditInput(Flight flight) {
+		//to convert string to date time
+		DateTimeFormatter dta1 = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm:ss");
+		DateTimeFormatter dta2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		
+		//set flight basic info
+		flight.setFlightInfo(operatingAirlineTxtField.getText(), aircraftModelNameTxtField.getText(), LocalDate.parse(originDateTxtField.getText(), dta2), departureAirportTxtField.getText(), arrivalAirportTxtField.getText());
+		
+		if(arrivalAirportTxtField.getText() == "FRA") {
+			
+			//set arrival details
+			flight.setArrival(LocalDateTime.parse(scheduledArrivalTxtField.getText(), dta1), Integer.parseInt(arrivalTerminalTxtField.getText()), LocalDateTime.parse(estimatedArrivalTxtField.getText(), dta1));
+			
+		} else if(departureAirportTxtField.getText() == "FRA"){
+			
+			//to convert string to list<integer>
+			Scanner scanner = new Scanner(checkInCounterTxtField.getText());
+			List<Integer> counter = new ArrayList<Integer>();
+			while (scanner.hasNextInt()) {
+			    counter.add(scanner.nextInt());
+			}
+			
+			//set departure details
+			flight.setDeparture(LocalDateTime.parse(scheduledDepartureTxtField.getText(), dta1), Integer.parseInt(departureTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")));
+			flight.setCheckIn(Integer.parseInt(checkInLocationTxtField.getText()), counter, LocalDateTime.parse(checkInStartTxtField.getText(), dta1), LocalDateTime.parse(checkInEndTxtField.getText(), dta1));
+			
+		}
+		
+		//to convert string to char, then set flight status
+		char[] status = new char[1];
+		status = flightStatusComboBox.getSelectedItem().toString().toCharArray();
+		flight.setStatus(status[0]);
+	}
+	
+	public void createFLight() {
+		
+	}
+	
 }
+
