@@ -37,12 +37,13 @@ public class FlightServer extends UnicastRemoteObject implements IFlightServer {
 		List<Integer> counters = Arrays.asList(100, 101, 102, 103, 014, 105);
 		List<String> gates = Arrays.asList("E12", "E13");
 		flight1.setFlightInfo("Lufthansa", "A380", true, LocalDate.of(2021, 11, 24), "FRA", "HKG");
-		flight1.setDeparture(LocalDateTime.of(2021, 11, 24, 05, 12), 1, gates);
+		flight1.setDeparture(LocalDateTime.of(2021, 11, 24, 05, 12), 1, gates, LocalDateTime.of(2021, 11, 24, 05, 17));
 		flight1.setCheckIn(3, counters, LocalDateTime.of(2021, 11, 24, 00, 00), LocalDateTime.of(2021, 11, 24, 04, 42));
 		
 		Flight flight2 = new Flight("CX4321");
+		gates = Arrays.asList("A03", "A04");
 		flight2.setFlightInfo("Cathy Pacific", "B747", false, LocalDate.of(2021, 11, 25), "LAX", "FRA");
-		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, LocalDateTime.of(2021, 11, 25, 15, 43));
+		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, gates, LocalDateTime.of(2021, 11, 25, 15, 43));
 
 		flights.add(flight1);
 		flights.add(flight2);

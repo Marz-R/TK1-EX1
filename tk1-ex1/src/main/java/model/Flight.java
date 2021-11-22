@@ -15,21 +15,21 @@ public class Flight implements Serializable{
 	private String model;
 	private String IATA;
 	private String flightNum;
-	private boolean depart; //true if departure flight, false if arrival flight
+	private boolean depart;  // true if departure flight, false if arrival flight
 	
 	private LocalDate oriDate;
 	private String D_airport;
 	private String A_airport;
 	
-	private LocalDateTime scheduledDT; //used for both arrival and departure
+	private LocalDateTime scheduledDT;  // used for both arrival and departure
 	private int terminal;
 	private List<String> gates;
 	
-	private LocalDateTime estDT; //for arrival only
-	private int ci_location; //for departure only
-	private List<Integer> ci_counters; //for departure only
-	private LocalDateTime ci_start; //for departure only
-	private LocalDateTime ci_end; //for departure only
+	private LocalDateTime estDT;  // used for both arrival and departure
+	private int ci_location;  // for departure only
+	private List<Integer> ci_counters;  // for departure only
+	private LocalDateTime ci_start;  // for departure only
+	private LocalDateTime ci_end;  // for departure only
 	
 	private char status;
 	
@@ -107,10 +107,11 @@ public class Flight implements Serializable{
 		this.A_airport = A_airport;
 	}
 	
-	public void setDeparture(LocalDateTime scheduledDT, int terminal, List<String> gates) {
+	public void setDeparture(LocalDateTime scheduledDT, int terminal, List<String> gates, LocalDateTime estDT) {
 		this.scheduledDT = scheduledDT;
 		this.terminal = terminal;
 		this.gates = gates;
+		this.estDT = estDT;
 	}
 	
 	public void setCheckIn(int ci_location, List<Integer> ci_counters, LocalDateTime ci_start, LocalDateTime ci_end) {
@@ -120,9 +121,10 @@ public class Flight implements Serializable{
 		this.ci_end = ci_end;
 	}
 	
-	public void setArrival(LocalDateTime scheduledDT, int terminal, LocalDateTime estDT) {
+	public void setArrival(LocalDateTime scheduledDT, int terminal, List<String> gates, LocalDateTime estDT) {
 		this.scheduledDT = scheduledDT;
 		this.terminal = terminal;
+		this.gates = gates;
 		this.estDT = estDT;
 	}
 	
