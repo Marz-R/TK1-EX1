@@ -8,22 +8,30 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import interfaces.IFlightClient;
 import interfaces.IFlightServer;
 import model.Flight;
+import gui.FlightDetailsGUI;
 
 public class FlightServer extends UnicastRemoteObject implements IFlightServer {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static Logger logger = Logger.getLogger(FlightServer.class.getName());
 
-	private List<IFlightClient> loggedInClients = new ArrayList<IFlightClient>();
+	private List<String> loggedInClients = new ArrayList<String>();
+	private List<Flight> flights = new ArrayList<Flight>();
 
 	protected FlightServer() throws RemoteException{
 		super();
-
+		
 		// initialize with some flights
 		Flight flight1 = new Flight("LH1234");
 		List<Integer> counters = Arrays.asList(100, 101, 102, 103, 014, 105);
@@ -35,38 +43,59 @@ public class FlightServer extends UnicastRemoteObject implements IFlightServer {
 		Flight flight2 = new Flight("CX4321");
 		flight2.setFlightInfo("Cathy Pacific", "B747", false, LocalDate.of(2021, 11, 25), "LAX", "FRA");
 		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, LocalDateTime.of(2021, 11, 25, 15, 43));
-		// ...
+		
+		flights.add(flight1);
+		flights.add(flight2);
 	}
 
 	@Override
 	public void login(String clientName, IFlightClient client) throws RemoteException{
-		if (loggedInClients.contains(client)) {
+		if (loggedInClients.contains(clientName)) {
 			logger.log(Level.INFO, clientName + "has already logged in.");
 		} else {
-			loggedInClients.add(client); //if client haven't logged in, add to list
+			loggedInClients.add(clientName); //if client haven't logged in, add to list
 			logger.log(Level.INFO, "New client logged in: " + clientName);
+			client.receiveListOfFlights(this.flights);
 		}		
 	}
 
 	@Override
-	public void logout(String clientName, IFlightClient client) throws RemoteException{
-		if (loggedInClients.contains(client)) {
-			loggedInClients.remove(client);
+	public void logout(String clientName) throws RemoteException{
+		if (loggedInClients.contains(clientName)) {
+			loggedInClients.remove(clientName);
 			logger.log(Level.INFO, "Client logged out: " + clientName);
 		} else {
 			logger.log(Level.INFO, clientName + "doesn't exist.");
 		}
 		
 	}
+	
+	@Override
+	public void createFlight(String clientName, Flight flight) throws RemoteException{
+		if (loggedInClients.contains(clientName)) {
+			flights.add(flight);
+			logger.log(Level.INFO, "Created flight: " + flight.toString());
+		} else {
+			logger.log(Level.INFO, "Invalid client.");
+		}
+	}
 
 	@Override
 	public void updateFlight(String clientName, Flight flight) throws RemoteException{
-		logger.log(Level.INFO, "Update flight: " + flight.toString());
+		if (loggedInClients.contains(clientName)) {
+			logger.log(Level.INFO, "Update flight: " + flight.toString());
+		} else {
+			logger.log(Level.INFO, "Invalid client.");
+		}
 	}
 
 	@Override
 	public void deleteFlight(String clientName, Flight flight) throws RemoteException{
-		logger.log(Level.INFO, "Delete flight: " + flight.toString());
+		if (loggedInClients.contains(clientName)) {
+			logger.log(Level.INFO, "Delete flight: " + flight.toString());
+		} else {
+			logger.log(Level.INFO, "Invalid client.");
+		}	
 	}
 
 	private void informAllClients(Flight flight, boolean deleted) throws RemoteException{
@@ -77,10 +106,10 @@ public class FlightServer extends UnicastRemoteObject implements IFlightServer {
 	public static void main(String[] args) {
 		try {
 			// generate local registry
+			//Registry registry = LocateRegistry.getRegistry(); 
+			//registry.bind("FlightServer", new FlightServer());
 			Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT); 
 			registry.bind("FlightServer", new FlightServer());
-			
-			// generate game server
 
 			logger.info("Server is ready");
 		} catch (Exception ex) {
