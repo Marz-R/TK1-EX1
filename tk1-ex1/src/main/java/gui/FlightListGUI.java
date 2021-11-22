@@ -142,17 +142,45 @@ public class FlightListGUI {
 		switch(operation) {
 		 	case 'C':  // create
 		 		flights.add(flight);
+		 		
+		 		model.addRow(new Object[] {
+						flight.getAirline(),
+						flight.getFlightNum(),
+						flight.getD_airport(),
+						flight.getA_airport(),
+						flight.getTerminal(),
+						flight.getScheduledDT(),
+						flight.getEstDT()
+						});
+		 		
 		 		break;
 		 	case 'U':  // update
 		 		for (Flight f : flights) {
 					if (f.getFlightNum() == flight.getFlightNum()) {  // assume flight number can function as the primary key
-						flights.set(flights.indexOf(f), flight);  // replace (i.e. update) existing flight data that have the same flight number with the received flight data
+						// replace (i.e. update) existing flight data that have the same flight number with the received flight data
+						int idx = flights.indexOf(f);
+						flights.set(idx, flight);
+						
+						// assume flights and rows in model have same structure
+						model.setValueAt(flight.getAirline(), idx, 0);
+						model.setValueAt(flight.getFlightNum(), idx, 1);
+						model.setValueAt(flight.getD_airport(), idx, 2);
+						model.setValueAt(flight.getA_airport(), idx, 3);
+						model.setValueAt(flight.getTerminal(), idx, 4);
+						model.setValueAt(flight.getScheduledDT(), idx, 5);
+						model.setValueAt(flight.getEstDT(), idx, 6);
+						
 						break;
 					}
 				}
+		 		
 		 		break;
 		 	case 'D':  // delete
-		 		flights.remove(flights.indexOf(flight));
+		 		int idx = flights.indexOf(f);
+		 		flights.remove(idx);
+		 		
+		 		model.removeRow(idx);  // assume flights and rows in model have same structure
+		 		
 		 		break;
 		}
 		
