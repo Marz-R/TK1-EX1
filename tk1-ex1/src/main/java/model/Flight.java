@@ -1,10 +1,16 @@
 package model;
 
 import java.util.List;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Flight {
+public class Flight implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String airline;
 	private String model;
 	private String IATA;
@@ -110,6 +116,8 @@ public class Flight {
 	public void setCheckIn(int ci_location, List<Integer> ci_counters, LocalDateTime ci_start, LocalDateTime ci_end) {
 		this.ci_location = ci_location;
 		this.ci_counters = ci_counters;
+		this.ci_start = ci_start;
+		this.ci_end = ci_end;
 	}
 	
 	public void setArrival(LocalDateTime scheduledDT, int terminal, LocalDateTime estDT) {
