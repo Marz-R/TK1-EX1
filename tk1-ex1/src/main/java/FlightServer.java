@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
+import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ import interfaces.IFlightClient;
 import interfaces.IFlightServer;
 import model.Flight;
 
-public class FlightServer implements IFlightServer {
+public class FlightServer extends UnicastRemoteObject implements IFlightServer {
 
 	private static Logger logger = Logger.getLogger(FlightServer.class.getName());
 
@@ -77,7 +77,7 @@ public class FlightServer implements IFlightServer {
 	public static void main(String[] args) {
 		try {
 			// generate local registry
-			Registry registry = LocateRegistry.getRegistry(); 
+			Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT); 
 			registry.bind("FlightServer", new FlightServer());
 			
 			// generate game server

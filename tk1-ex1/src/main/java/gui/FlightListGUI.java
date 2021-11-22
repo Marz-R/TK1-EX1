@@ -13,6 +13,9 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.awt.event.WindowAdapter;
 
@@ -67,19 +70,15 @@ public class FlightListGUI {
 		frmTkAirportArrivals.getContentPane().add(scrollPane);
 		
 		flightListTable = new JTable();
-		Object[][] rows = new Object[flights.size()][9];
-		for (int i = 0; i < flights.size(); i++) {
-			rows[i][0] = flights.get(i).airline;
-		}
 		flightListTable.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
-				"Operating Airline", "Flight Number", "Departure", "Arrival", "Terminal", "Scheduled Depature", "Estimated Departure", "Scheduled Arrival", "Estimated Arrival"
+				"Operating Airline", "Flight Number", "Departure", "Arrival", "Terminal", "Scheduled Time", "Estimated Time"
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-				String.class, String.class, String.class, String.class, Integer.class, Object.class, Object.class, Object.class, Object.class
+				String.class, String.class, String.class, String.class, Integer.class, Object.class, Object.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -109,6 +108,19 @@ public class FlightListGUI {
 	
 	public void setListOfFlights(List<Flight> flights) {
 		this.flights = flights;
+		DefaultTableModel model = (DefaultTableModel) flightListTable.getModel();
+		for (int i = 0; i < flights.size(); i++) {
+			model.addRow(new Object[] {
+					flights.get(i).getAirline(),
+					flights.get(i).getFlightNum(),
+					flights.get(i).getD_airport(),
+					flights.get(i).getA_airport(),
+					flights.get(i).getTerminal(),
+					flights.get(i).getScheduledDT(),
+					flights.get(i).getEstDT()
+					});
+		}
+		model.fireTableDataChanged();
 	}
 
 }

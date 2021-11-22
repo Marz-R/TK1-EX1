@@ -32,6 +32,7 @@ public class FlightClient extends UnicastRemoteObject implements IFlightClient {
 	@Override
 	public void receiveListOfFlights(List<Flight> flights) {
 		logger.log(Level.INFO, "List of flights received: " + flights.size());
+		flightListGUI.setListOfFlights(flights);
 	}
 
 	@Override
@@ -47,8 +48,8 @@ public class FlightClient extends UnicastRemoteObject implements IFlightClient {
 		
 	}
 
-	public void logout() {
-		flightServer.logout(clientName);
+	public void logout() throws RemoteException {
+		flightServer.logout(clientName, this);
 	}
 	
 	public void startup() throws RemoteException, NotBoundException {
@@ -56,7 +57,7 @@ public class FlightClient extends UnicastRemoteObject implements IFlightClient {
 		flightListGUI.setFlightClient(this);
 		
 		Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-		IFlightServer flightServer = (IFlightServer) registry.lookup("server");
+		IFlightServer flightServer = (IFlightServer) registry.lookup("FlightServer");
 		this.flightServer = flightServer;
 		
 		flightServer.login(clientName, this);
