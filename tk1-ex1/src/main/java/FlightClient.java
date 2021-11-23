@@ -7,14 +7,13 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 
 import interfaces.IFlightClient;
 import interfaces.IFlightServer;
 import model.Flight;
 import gui.FlightListGUI;
 
-public class FlightClient extends UnicastRemoteObject implements IFlightClient {
+public class FlightClient implements IFlightClient {
 
 	private static Logger logger = Logger.getLogger(FlightServer.class.getName());
 
@@ -41,8 +40,20 @@ public class FlightClient extends UnicastRemoteObject implements IFlightClient {
 		flightListGUI.setUpdatedFlight(flight, operation);
 	}
 	
-	public void sendUpdatedFlight(Flight flight, boolean deleted) {
-		// called by GUI; send updated flight to server (call update/delete Flight function in FlightServer depending on value of deleted)
+	// called by GUI
+	// send updated flight to server (call create/update/delete Flight function in FlightServer depending on value of operation)
+	public void sendUpdatedFlight(Flight flight, char operation) throws RemoteException {
+		switch(operation) {
+			case 'C':
+				flightServer.createFlight(clientName, this, flight);
+				break;
+			case 'U':
+				flightServer.updateFlight(clientName, this, flight);
+				break;
+			case 'D':
+				flightServer.deleteFlight(clientName, this, flight);
+				break;
+		}
 	}
 
 	public void logout() throws RemoteException {
@@ -50,14 +61,15 @@ public class FlightClient extends UnicastRemoteObject implements IFlightClient {
 	}
 	
 	public void startup() throws RemoteException, NotBoundException {
-		this.flightListGUI = new FlightListGUI();
-		flightListGUI.setFlightClient(this);
-		
 		Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
 		IFlightServer flightServer = (IFlightServer) registry.lookup("FlightServer");
 		this.flightServer = flightServer;
 		
 		flightServer.login(clientName, this);
+		
+		this.flightListGUI = new FlightListGUI();
+		flightListGUI.setFlightClient(this);
+		flightListGUI.frmTkAirportArrivals.setVisible(true);  // start (open) FlightListGUI
 	}
 
 	public static void main(String[] args) throws RemoteException, NotBoundException {

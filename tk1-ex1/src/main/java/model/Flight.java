@@ -26,12 +26,12 @@ public class Flight implements Serializable{
 	private List<String> gates;
 	
 	private LocalDateTime estDT;  // used for both arrival and departure
-	private int ci_location;  // for departure only
+	private String ci_location;  // for departure only
 	private List<Integer> ci_counters;  // for departure only
 	private LocalDateTime ci_start;  // for departure only
 	private LocalDateTime ci_end;  // for departure only
 	
-	private char status;
+	private String status;
 	
 	public Flight(String flightNum){
 		this.flightNum = flightNum;
@@ -42,12 +42,20 @@ public class Flight implements Serializable{
 		return this.airline;
 	}
 	
+	public String getIATA() {
+		return this.IATA;
+	}
+	
 	public String getFlightNum() {
 		return this.flightNum;
 	}
 	
 	public String getModel() {
 		return this.model;
+	}
+	
+	public boolean getDepart() {
+		return this.depart;
 	}
 	
 	public LocalDate getOriDate() {
@@ -78,7 +86,7 @@ public class Flight implements Serializable{
 		return this.estDT;
 	}
 	
-	public int getCI_location() {
+	public String getCI_location() {
 		return this.ci_location;
 	}
 	
@@ -94,7 +102,7 @@ public class Flight implements Serializable{
 		return this.ci_end;
 	}
 	
-	public char getStatus() {
+	public String getStatus() {
 		return this.status;
 	}
 	
@@ -108,13 +116,14 @@ public class Flight implements Serializable{
 	}
 	
 	public void setDeparture(LocalDateTime scheduledDT, int terminal, List<String> gates, LocalDateTime estDT) {
+		this.depart = true;  // calling setDeparture implicates that this flight is a departure flight
 		this.scheduledDT = scheduledDT;
 		this.terminal = terminal;
 		this.gates = gates;
 		this.estDT = estDT;
 	}
 	
-	public void setCheckIn(int ci_location, List<Integer> ci_counters, LocalDateTime ci_start, LocalDateTime ci_end) {
+	public void setCheckIn(String ci_location, List<Integer> ci_counters, LocalDateTime ci_start, LocalDateTime ci_end) {
 		this.ci_location = ci_location;
 		this.ci_counters = ci_counters;
 		this.ci_start = ci_start;
@@ -122,13 +131,14 @@ public class Flight implements Serializable{
 	}
 	
 	public void setArrival(LocalDateTime scheduledDT, int terminal, List<String> gates, LocalDateTime estDT) {
+		this.depart = false;  // calling setArrival implicates that this flight is a arrival flight
 		this.scheduledDT = scheduledDT;
 		this.terminal = terminal;
 		this.gates = gates;
 		this.estDT = estDT;
 	}
 	
-	public void setStatus(char status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

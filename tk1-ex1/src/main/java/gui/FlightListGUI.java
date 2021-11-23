@@ -8,6 +8,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.Font;
@@ -19,13 +20,16 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.awt.event.WindowAdapter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class FlightListGUI {
 
 	private IFlightClient flightClient;
 	private List<Flight> flights;
-	private JFrame frmTkAirportArrivals;
+	public JFrame frmTkAirportArrivals;
 	private JTable flightListTable;
+	private int selectedRow;  // detect which row to be updated/deleted
 
 	/**
 	 * Launch the application.
@@ -60,14 +64,14 @@ public class FlightListGUI {
 			public void windowOpened(WindowEvent e) {
 				
 			}
-			@Override
-			public void windowClosing(WindowEvent e) {
-				try {
-					flightClient.logout();
-				} catch (RemoteException re) {
-					re.printStackTrace();
-				}
-			}
+//			@Override
+//			public void windowClosing(WindowEvent e) {
+//				try {
+//					flightClient.logout();
+//				} catch (RemoteException re) {
+//					re.printStackTrace();
+//				}
+//			}
 		});
 		frmTkAirportArrivals.setTitle("TK Airport Arrivals / Departures");
 		frmTkAirportArrivals.setBounds(100, 100, 957, 636);
@@ -79,8 +83,22 @@ public class FlightListGUI {
 		frmTkAirportArrivals.getContentPane().add(scrollPane);
 		
 		flightListTable = new JTable();
+		flightListTable.setEnabled(false);
+		flightListTable.setColumnSelectionAllowed(true);
+		flightListTable.setCellSelectionEnabled(true);
+		flightListTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//**********************
+				// TODO: having problem detecting which row in table user selected
+				//**********************
+				selectedRow = flightListTable.rowAtPoint(SwingUtilities.convertPoint(frmTkAirportArrivals, e.getPoint(), flightListTable));
+				//selectedRow = flightListTable.getSelectedRow();
+			}
+		});
 		flightListTable.setModel(new DefaultTableModel(
 			new Object[][] {
+				{"AH", "123", "TK", "FRA", "1", "2018-10-09 15:20:00", "2018-10-09 15:25:00"}  // initial row just for testing behaviour when edit button clicked
 			},
 			new String[] {
 				"Operating Airline", "Flight Number", "Departure", "Arrival", "Terminal", "Scheduled Time", "Estimated Time"
@@ -96,16 +114,40 @@ public class FlightListGUI {
 		scrollPane.setViewportView(flightListTable);
 		
 		JButton newButton = new JButton("New");
+		newButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				FlightDetailsGUI flightDetailsGUI = new FlightDetailsGUI(true);  // open DetailsGUI with create==true flag
+				flightDetailsGUI.frmFlightDetails.setVisible(true);
+			}
+		});
 		newButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
 		newButton.setBounds(298, 564, 103, 30);
 		frmTkAirportArrivals.getContentPane().add(newButton);
 		
 		JButton editButton = new JButton("Edit");
+		editButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				FlightDetailsGUI flightDetailsGUI = new FlightDetailsGUI(false, flights.get(selectedRow));  // open DetailsGUI with create==false flag and flight data; assume flights and rows in table have same structure
+				flightDetailsGUI.frmFlightDetails.setVisible(true);
+			}
+		});
 		editButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
 		editButton.setBounds(411, 564, 103, 30);
 		frmTkAirportArrivals.getContentPane().add(editButton);
 		
 		JButton deleteButton = new JButton("Delete");
+		deleteButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					flightClient.sendUpdatedFlight(flights.get(selectedRow), 'D');  // ask client to send delete request to server
+				} catch (RemoteException re) {
+					re.printStackTrace();
+				}
+			}
+		});
 		deleteButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
 		deleteButton.setBounds(525, 564, 103, 30);
 		frmTkAirportArrivals.getContentPane().add(deleteButton);
@@ -176,7 +218,7 @@ public class FlightListGUI {
 		 		
 		 		break;
 		 	case 'D':  // delete
-		 		int idx = flights.indexOf(f);
+		 		int idx = flights.indexOf(flight);
 		 		flights.remove(idx);
 		 		
 		 		model.removeRow(idx);  // assume flights and rows in model have same structure
