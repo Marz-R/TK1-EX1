@@ -15,7 +15,7 @@ public class Flight implements Serializable{
 	private String model;
 	private String IATA;
 	private String flightNum;
-	private boolean depart;  // true if departure flight, false if arrival flight
+	//private boolean depart;  // true if departure flight, false if arrival flight
 	
 	private LocalDate oriDate;
 	private String D_airport;
@@ -98,10 +98,9 @@ public class Flight implements Serializable{
 		return this.status;
 	}
 	
-	public void setFlightInfo(String airline, String model, boolean depart, LocalDate oriDate, String D_airport, String A_airport) {
+	public void setFlightInfo(String airline, String model, LocalDate oriDate, String D_airport, String A_airport) {
 		this.airline = airline;
 		this.model = model;
-		this.depart = depart;
 		this.oriDate = oriDate;
 		this.D_airport = D_airport;
 		this.A_airport = A_airport;

@@ -41,7 +41,7 @@ public class FlightClient extends UnicastRemoteObject implements IFlightClient {
 		flightListGUI.setUpdatedFlight(flight, operation);
 	}
 	
-	public void sendUpdatedFlight(Flight flight, boolean deleted) {
+	public void sendUpdatedFlight(Flight flight, char operation) {
 		// called by GUI; send updated flight to server (call update/delete Flight function in FlightServer depending on value of deleted)
 	}
 

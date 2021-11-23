@@ -176,12 +176,14 @@ public class FlightListGUI {
 		 		
 		 		break;
 		 	case 'D':  // delete
-		 		int idx = flights.indexOf(f);
-		 		flights.remove(idx);
+		 		for (Flight f : flights) {
+		 			int idx = flights.indexOf(f);
+		 			flights.remove(idx);
 		 		
-		 		model.removeRow(idx);  // assume flights and rows in model have same structure
+		 			model.removeRow(idx);  // assume flights and rows in model have same structure
 		 		
-		 		break;
+		 			break;
+		 		}
 		}
 		
 		model.fireTableDataChanged();

@@ -13,5 +13,7 @@ public interface IFlightClient extends Remote {
 	public void receiveListOfFlights(List<Flight> flights) throws RemoteException;
 	
 	public void receiveUpdatedFlight(Flight flight, char operation) throws RemoteException;
+	
+	public void sendUpdatedFlight(Flight flight, char operation) throws RemoteException;
 
 }
