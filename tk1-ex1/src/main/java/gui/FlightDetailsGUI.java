@@ -1,13 +1,17 @@
 package gui;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
 import java.awt.Font;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +20,9 @@ import java.util.Scanner;
 import javax.swing.JTextField;
 
 import model.Flight;
+import interfaces.IFlightClient;
 import interfaces.IFlightServer;
+import gui.FlightListGUI;
 
 import javax.swing.JComboBox;
 import javax.swing.JButton;
@@ -46,6 +52,12 @@ public class FlightDetailsGUI {
 	private JTextField estimatedArrivalTxtField;
 	private JTextField checkInEndTxtField;
 	private JComboBox flightStatusComboBox;
+	
+	private Flight tempFlight;
+	private IFlightClient client;
+	private FlightListGUI flightListGUI;
+	
+	private boolean create = false;
 
 	/**
 	 * Launch the application.
@@ -54,7 +66,7 @@ public class FlightDetailsGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					FlightDetailsGUI window = new FlightDetailsGUI(true);// true when create, false when edit
+					FlightDetailsGUI window = new FlightDetailsGUI();// true when create, false when edit
 					window.frmFlightDetails.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -66,14 +78,14 @@ public class FlightDetailsGUI {
 	/**
 	 * Create the application.
 	 */
-	public FlightDetailsGUI(boolean create) {
-		initialize(create);
+	public FlightDetailsGUI() {
+		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(boolean create) {
+	private void initialize() {
 		frmFlightDetails = new JFrame();
 		frmFlightDetails.setTitle("Flight Details");
 		frmFlightDetails.setBounds(100, 100, 945, 661);
@@ -141,18 +153,14 @@ public class FlightDetailsGUI {
 		
 		IATATxtField = new JTextField();
 		IATATxtField.setColumns(10);
-		if(!create) {
-			IATATxtField.setEditable(false); //set false if edit
-		}
+		IATATxtField.setEditable(false); //set false if edit
 		
 		aircraftModelNameTxtField = new JTextField();
 		aircraftModelNameTxtField.setColumns(10);
 		
 		trackingNumberTxtField = new JTextField();
 		trackingNumberTxtField.setColumns(10);
-		if(!create) {
-			trackingNumberTxtField.setEditable(false); //set false if edit
-		}
+		trackingNumberTxtField.setEditable(false); //set false if edit
 		
 		departureAirportTxtField = new JTextField();
 		departureAirportTxtField.setColumns(10);
@@ -183,9 +191,7 @@ public class FlightDetailsGUI {
 		
 		operatingAirlineTxtField = new JTextField();
 		operatingAirlineTxtField.setColumns(10);
-		if(!create) {
-			operatingAirlineTxtField.setEditable(false); //set false if edit
-		}
+		operatingAirlineTxtField.setEditable(false); //set false if edit
 		
 		arrivalAirportTxtField = new JTextField();
 		arrivalAirportTxtField.setColumns(10);
@@ -219,9 +225,33 @@ public class FlightDetailsGUI {
 		
 		JButton saveButton = new JButton("Save");
 		saveButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getEditInput(tempFlight);
+				try {
+					if(create) {
+						client.sendUpdatedFlight(tempFlight, 'C');
+					} else {
+						client.sendUpdatedFlight(tempFlight, 'U');
+					}
+					
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
+		cancelButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frmFlightDetails.setVisible(false);
+				frmFlightDetails.dispose(); //destroy JFrame object
+			}
+		});
 		
 		GroupLayout groupLayout = new GroupLayout(frmFlightDetails.getContentPane());
 		frmFlightDetails.getContentPane().setLayout(groupLayout);
@@ -452,6 +482,9 @@ public class FlightDetailsGUI {
 	}
 	
 	public void getEditInput(Flight flight) {
+		String num = IATATxtField.getText() + trackingNumberTxtField.getText();
+		flight = new Flight(num);
+		
 		//to convert string to date time
 		DateTimeFormatter dta1 = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm:ss");
 		DateTimeFormatter dta2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -462,7 +495,7 @@ public class FlightDetailsGUI {
 		if(arrivalAirportTxtField.getText() == "FRA") {
 			
 			//set arrival details
-			flight.setArrival(LocalDateTime.parse(scheduledArrivalTxtField.getText(), dta1), Integer.parseInt(arrivalTerminalTxtField.getText()), LocalDateTime.parse(estimatedArrivalTxtField.getText(), dta1));
+			flight.setArrival(LocalDateTime.parse(scheduledArrivalTxtField.getText(), dta1), Integer.parseInt(arrivalTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedArrivalTxtField.getText(), dta1));
 			
 		} else if(departureAirportTxtField.getText() == "FRA"){
 			
@@ -474,7 +507,7 @@ public class FlightDetailsGUI {
 			}
 			
 			//set departure details
-			flight.setDeparture(LocalDateTime.parse(scheduledDepartureTxtField.getText(), dta1), Integer.parseInt(departureTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")));
+			flight.setDeparture(LocalDateTime.parse(scheduledDepartureTxtField.getText(), dta1), Integer.parseInt(departureTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedDepartureTxtField.getText(), dta1));
 			flight.setCheckIn(Integer.parseInt(checkInLocationTxtField.getText()), counter, LocalDateTime.parse(checkInStartTxtField.getText(), dta1), LocalDateTime.parse(checkInEndTxtField.getText(), dta1));
 			
 		}
@@ -485,8 +518,11 @@ public class FlightDetailsGUI {
 		flight.setStatus(status[0]);
 	}
 	
-	public void createFLight() {
-		
+	public void createFLight() { //call by listGUI if "new" button is clicked
+		IATATxtField.setEditable(true);
+		trackingNumberTxtField.setEditable(true); 
+		operatingAirlineTxtField.setEditable(true);
+		create = true;
 	}
 	
 }
