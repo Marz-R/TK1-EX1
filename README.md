@@ -1,7 +1,9 @@
 # TK1-EX1
 Execution
 -------------------------
-Please run the program using 2 (or more) command prompt, one for server, one (or more) for client.
+Please execute Gradle inside `tk1-ex1` folder, not TK1-EX1 folder.
+
+Run the program using 2 (or more) command prompt, one for server, one (or more) for client.
 
 For the server:
 > ./gradlew runServerApp
@@ -10,7 +12,7 @@ For the client:
 > ./gradlew runClientApp
 
 DO NOT RUN BOTH CLIENT AND SERVER ON THE SAME COMMAND PROMPT!
--------------------------
+
 
 Edit and Create
 -------------------------
