@@ -18,6 +18,7 @@ Edit and Create
 -------------------------
 When editing/creating flights, please follow the below datetime format:
 > YYYY-MM-DD (for "original date" field only)
+> 
 > YYYY-MM-DD HH:MM:SS
 
 `Check-in counters` field is `List<Integer>` type.
