@@ -577,12 +577,12 @@ public class FlightDetailsGUI {
 		//set flight basic info
 		flight.setFlightInfo(operatingAirlineTxtField.getText(), aircraftModelNameTxtField.getText(), LocalDate.parse(originDateTxtField.getText(), localDateFormatter), departureAirportTxtField.getText(), arrivalAirportTxtField.getText());
 		
-		if(arrivalAirportTxtField.getText() == "TK") {  // this is a flight arriving to TK airport
+		if(arrivalAirportTxtField.getText().equals("TK")) {  // this is a flight arriving to TK airport
 			
 			//set arrival details
-			flight.setArrival(LocalDateTime.parse(scheduledArrivalTxtField.getText().replace("", "T"), localDateTimeFormatter), Integer.parseInt(arrivalTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedArrivalTxtField.getText().replace("", "T"), localDateTimeFormatter));
+			flight.setArrival(LocalDateTime.parse(scheduledArrivalTxtField.getText(), localDateTimeFormatter), Integer.parseInt(arrivalTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedArrivalTxtField.getText(), localDateTimeFormatter));
 			
-		} else if(departureAirportTxtField.getText() == "TK") {  // this is a flight departing from TK airport
+		} else if(departureAirportTxtField.getText().equals("TK")) {  // this is a flight departing from TK airport
 			
 			//to convert string to list<integer>
 			Scanner scanner = new Scanner(checkInCounterTxtField.getText());
@@ -592,8 +592,8 @@ public class FlightDetailsGUI {
 			}
 			
 			//set departure details
-			flight.setDeparture(LocalDateTime.parse(scheduledDepartureTxtField.getText().replace("", "T"), localDateTimeFormatter), Integer.parseInt(departureTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedDepartureTxtField.getText().replace("", "T"), localDateTimeFormatter));
-			flight.setCheckIn(checkInLocationTxtField.getText(), counter, LocalDateTime.parse(checkInStartTxtField.getText().replace("", "T"), localDateTimeFormatter), LocalDateTime.parse(checkInEndTxtField.getText().replace("", "T"), localDateTimeFormatter));
+			flight.setDeparture(LocalDateTime.parse(scheduledDepartureTxtField.getText(), localDateTimeFormatter), Integer.parseInt(departureTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedDepartureTxtField.getText(), localDateTimeFormatter));
+			flight.setCheckIn(checkInLocationTxtField.getText(), counter, LocalDateTime.parse(checkInStartTxtField.getText(), localDateTimeFormatter), LocalDateTime.parse(checkInEndTxtField.getText(), localDateTimeFormatter));
 			
 		}
 		

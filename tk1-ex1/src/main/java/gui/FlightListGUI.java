@@ -84,14 +84,14 @@ public class FlightListGUI {
 			// **************************
 			// uncomment below once connection with client has been succeed (i.e. once we made it to run gradle tasks)
 			// if you uncomment below without connection with client, you will not be able to close the window due to error
-//			@Override
-//			public void windowClosing(WindowEvent e) {
-//				try {
-//					flightClient.logout();
-//				} catch (RemoteException re) {
-//					re.printStackTrace();
-//				}
-//			}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				try {
+					flightClient.logout();
+				} catch (RemoteException re) {
+					re.printStackTrace();
+				}
+			}
 			// **************************
 		});
 		frmTkAirportArrivals.setTitle("TK Airport Arrivals / Departures");
@@ -229,20 +229,19 @@ public class FlightListGUI {
 		 		
 		 		break;
 		 	case 'U':  // update
-		 		for (Flight f : flights) {
-					if (f.getFlightNum() == flight.getFlightNum()) {  // assume flight number can function as the primary key
+		 		for (int i = 0; i < flights.size(); i++) {
+					if (flights.get(i).getFlightNum().equals(flight.getFlightNum())) {  // assume flight number can function as the primary key
 						// replace (i.e. update) existing flight data that have the same flight number with the received flight data
-						int idx = flights.indexOf(f);
-						flights.set(idx, flight);
+						flights.set(i, flight);
 						
 						// assume flights and rows in model have same structure
-						model.setValueAt(flight.getAirline(), idx, 0);
-						model.setValueAt(flight.getFlightNum(), idx, 1);
-						model.setValueAt(flight.getD_airport(), idx, 2);
-						model.setValueAt(flight.getA_airport(), idx, 3);
-						model.setValueAt(flight.getTerminal(), idx, 4);
-						model.setValueAt(flight.getScheduledDT(), idx, 5);
-						model.setValueAt(flight.getEstDT(), idx, 6);
+						model.setValueAt(flight.getAirline(), i, 0);
+						model.setValueAt(flight.getFlightNum(), i, 1);
+						model.setValueAt(flight.getD_airport(), i, 2);
+						model.setValueAt(flight.getA_airport(), i, 3);
+						model.setValueAt(flight.getTerminal(), i, 4);
+						model.setValueAt(flight.getScheduledDT(), i, 5);
+						model.setValueAt(flight.getEstDT(), i, 6);
 						
 						break;
 					}
@@ -250,16 +249,14 @@ public class FlightListGUI {
 		 		
 		 		break;
 		 	case 'D':  // delete
+		 		// int idx = flights.indexOf(flight); <- did not work for some reason
 		 		for (int i = 0; i < flights.size(); i++) {
 					if (flights.get(i).getFlightNum().equals(flight.getFlightNum())) {  // not falling into this condition for some reason...
 						flights.remove(i);
-						model.removeRow(i);
+						model.removeRow(i);  // assume flights and rows in model have same structure
 						break;
 					}
 				}
-//		 		int idx = flights.indexOf(flight);
-//		 		flights.remove(idx);
-//		 		model.removeRow(idx);  // assume flights and rows in model have same structure
 		 		
 		 		break;
 		}

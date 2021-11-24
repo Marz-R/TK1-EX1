@@ -88,9 +88,9 @@ public class FlightServer implements IFlightServer {
 	@Override
 	public void updateFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException{
 		if (loggedInClients.contains(client)) {
-			for (Flight f : flights) {
-				if (f.getFlightNum() == flight.getFlightNum()) {  // assume flight number can function as the primary key
-					flights.set(flights.indexOf(f), flight);  // replace (i.e. update) existing flight data that have the same flight number with the received flight data
+			for (int i = 0; i < flights.size(); i++) {
+				if (flights.get(i).getFlightNum().equals(flight.getFlightNum())) {  // assume flight number can function as the primary key
+					flights.set(i, flight);  // replace (i.e. update) existing flight data that have the same flight number with the received flight data
 					break;
 				}
 			}
@@ -111,7 +111,6 @@ public class FlightServer implements IFlightServer {
 					break;
 				}
 			}
-//			flights.remove(flights.indexOf(flight));
 			
 			logger.log(Level.INFO, "Deleted flight: " + flight.toString() + "by " + clientName);
 			informAllClients(flight, 'D');
