@@ -57,7 +57,7 @@ public class FlightDetailsGUI {
 	//to convert string to date time
 	private DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	private DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	private Flight tempFlight;
+	private Flight tempFlight = new Flight();
 	private IFlightClient flightClient;
 	private FlightListGUI flightListGUI;
 	
@@ -572,7 +572,7 @@ public class FlightDetailsGUI {
 
 	public void getEditInput(Flight flight) {
 		String num = IATATxtField.getText() + trackingNumberTxtField.getText();
-		flight = new Flight(num);
+		flight.setFlightNum(num); //set flightNum
 		
 		//set flight basic info
 		flight.setFlightInfo(operatingAirlineTxtField.getText(), aircraftModelNameTxtField.getText(), LocalDate.parse(originDateTxtField.getText(), localDateFormatter), departureAirportTxtField.getText(), arrivalAirportTxtField.getText());
