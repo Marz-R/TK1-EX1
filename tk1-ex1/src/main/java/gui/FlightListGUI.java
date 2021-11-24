@@ -220,10 +220,7 @@ public class FlightListGUI {
 		 	case 'D':  // delete
 		 		int idx = flights.indexOf(flight);
 		 		flights.remove(idx);
-		 		
 		 		model.removeRow(idx);  // assume flights and rows in model have same structure
-		 		
-		 		break;
 		}
 		
 		model.fireTableDataChanged();
