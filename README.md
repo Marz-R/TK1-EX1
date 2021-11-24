@@ -1,4 +1,6 @@
 # TK1-EX1
+Execution
+-------------------------
 Please run the program using 2 (or more) command prompt, one for server, one (or more) for client.
 
 For the server:
@@ -8,6 +10,9 @@ For the client:
 > ./gradlew runClientApp
 
 DO NOT RUN BOTH CLIENT AND SERVER ON THE SAME COMMAND PROMPT!
+-------------------------
+
+Edit and Create
 -------------------------
 When editing/creating flights, please follow the below datetime format:
 > YYYY-MM-DD (for "original date" field only)
@@ -22,7 +27,10 @@ While all the other fields are `string` type.
 Please put "TK" into either the arrival or departure airport, since the system is served for virtual TK airport.
 
 Please put the information on only the departure and check-in fields, if your flight is a departure flight.
+Please put the information on only the arrival fields, if your flight is an arrival flight.
 
+Other operations
+-------------------------
 When using the editing/creating window, use "cancel" to close the window, instead of "X".
 Otherwise both editing window and flight list window will be closed.
 
