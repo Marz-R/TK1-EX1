@@ -128,7 +128,7 @@ public class FlightServer implements IFlightServer {
 			//Registry registry = LocateRegistry.getRegistry(); 
 			//registry.bind("FlightServer", new FlightServer());
 			Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT); 
-			registry.bind("FlightServer", new FlightServer());
+			registry.rebind("FlightServer", new FlightServer());
 
 			logger.info("Server is ready");
 		} catch (Exception ex) {

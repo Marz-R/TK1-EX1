@@ -15,7 +15,7 @@ public class Flight implements Serializable{
 	private String model;
 	private String IATA;
 	private String flightNum;
-	//private boolean depart;  // true if departure flight, false if arrival flight
+	private boolean depart;  // true if departure flight, false if arrival flight
 	
 	private LocalDate oriDate;
 	private String D_airport;

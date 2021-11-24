@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.Font;
@@ -17,6 +19,7 @@ import java.awt.event.WindowListener;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.awt.event.WindowAdapter;
@@ -26,7 +29,7 @@ import java.awt.event.MouseEvent;
 public class FlightListGUI {
 
 	private IFlightClient flightClient;
-	private List<Flight> flights;
+	private List<Flight> flights = new ArrayList<Flight>();
 	public JFrame frmTkAirportArrivals;
 	private JTable flightListTable;
 	private int selectedRow;  // detect which row to be updated/deleted
@@ -58,12 +61,29 @@ public class FlightListGUI {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		// ******************
+		// just for testing function of edit button clicked without dependencies to client and server.
+		Flight flight1 = new Flight("LH1234");
+		List<Integer> counters = Arrays.asList(100, 101, 102, 103, 104, 105);
+		List<String> gates = Arrays.asList("E12", "E13");
+		flight1.setFlightInfo("Lufthansa", "A380", LocalDate.of(2021, 11, 24), "FRA", "HKG");
+		flight1.setDeparture(LocalDateTime.of(2021, 11, 24, 05, 12), 1, gates, LocalDateTime.of(2021, 11, 24, 05, 17));
+		flight1.setCheckIn("3", counters, LocalDateTime.of(2021, 11, 24, 00, 00), LocalDateTime.of(2021, 11, 24, 04, 42));
+		flights.add(flight1);
+		
+		Flight flight2 = new Flight("CX4321");
+		gates = Arrays.asList("A03", "A04");
+		flight2.setFlightInfo("Cathy Pacific", "B747", LocalDate.of(2021, 11, 25), "LAX", "FRA");
+		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, gates, LocalDateTime.of(2021, 11, 25, 15, 43));
+		flight2.setStatus("B");
+		flights.add(flight2);
+		// ******************
+		
 		frmTkAirportArrivals = new JFrame();
 		frmTkAirportArrivals.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent e) {
-				
-			}
+			// **************************
+			// uncomment below once connection with client has been succeed (i.e. once we made it to run gradle tasks)
+			// if you uncomment below without connection with client, you will not be able to close the window due to error
 //			@Override
 //			public void windowClosing(WindowEvent e) {
 //				try {
@@ -72,6 +92,7 @@ public class FlightListGUI {
 //					re.printStackTrace();
 //				}
 //			}
+			// **************************
 		});
 		frmTkAirportArrivals.setTitle("TK Airport Arrivals / Departures");
 		frmTkAirportArrivals.setBounds(100, 100, 957, 636);
@@ -83,22 +104,31 @@ public class FlightListGUI {
 		frmTkAirportArrivals.getContentPane().add(scrollPane);
 		
 		flightListTable = new JTable();
-		flightListTable.setEnabled(false);
+		flightListTable.setEnabled(true);  // set to true allows user to edit the value in table which we don't want to, but if set to false, listener cannot detect selected row
+		flightListTable.setRowSelectionAllowed(true);
 		flightListTable.setColumnSelectionAllowed(true);
 		flightListTable.setCellSelectionEnabled(true);
+		// below is just another option for addMouseListener
+//		flightListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+//			@Override
+//			public void valueChanged(ListSelectionEvent e) {
+//				selectedRow = flightListTable.getSelectedRow();
+//				System.out.println(selectedRow);
+//			}
+//		});
 		flightListTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//**********************
-				// TODO: having problem detecting which row in table user selected
-				//**********************
-				selectedRow = flightListTable.rowAtPoint(SwingUtilities.convertPoint(frmTkAirportArrivals, e.getPoint(), flightListTable));
-				//selectedRow = flightListTable.getSelectedRow();
+				//selectedRow = flightListTable.rowAtPoint(SwingUtilities.convertPoint(frmTkAirportArrivals, e.getPoint(), flightListTable));
+				selectedRow = flightListTable.getSelectedRow();
+				System.out.println(selectedRow);
 			}
 		});
 		flightListTable.setModel(new DefaultTableModel(
 			new Object[][] {
-				{"AH", "123", "TK", "FRA", "1", "2018-10-09 15:20:00", "2018-10-09 15:25:00"}  // initial row just for testing behaviour when edit button clicked
+				// initial rows just for testing behaviour when edit button clicked
+				{"LH", "1234", "FRA", "HKG", "1", "2021-11-24 05:12:00", "2021-11-24 05:17:00"},
+				{"CX", "4321", "LAX", "FRA", "1", "2021-11-25 15:43:00", "2021-11-25 15:43:00"}
 			},
 			new String[] {
 				"Operating Airline", "Flight Number", "Departure", "Arrival", "Terminal", "Scheduled Time", "Estimated Time"
