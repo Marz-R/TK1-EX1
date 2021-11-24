@@ -33,7 +33,11 @@ public class Flight implements Serializable{
 	
 	private String status;
 	
-	public Flight(String flightNum){
+	public Flight(){
+		
+	}
+	
+	public void setFlightNum(String flightNum) {
 		this.flightNum = flightNum;
 		this.IATA = flightNum.substring(0,2);
 	}
