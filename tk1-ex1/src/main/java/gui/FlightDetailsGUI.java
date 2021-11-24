@@ -312,6 +312,8 @@ public class FlightDetailsGUI {
 					} else {
 						flightClient.sendUpdatedFlight(tempFlight, 'U');
 					}
+					frmFlightDetails.setVisible(false);
+					frmFlightDetails.dispose(); //destroy JFrame object
 					
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
