@@ -251,11 +251,7 @@ public class FlightListGUI {
 		 		break;
 		 	case 'D':  // delete
 		 		for (int i = 0; i < flights.size(); i++) {
-		 			System.out.println(flights.get(i).getFlightNum());
-		 			System.out.println(flight.getFlightNum());
-		 			System.out.println(flights.get(i).getFlightNum() == flight.getFlightNum());
-					if (flights.get(i).getFlightNum() == flight.getFlightNum()) {  // not falling into this condition for some reason...
-						System.out.println("HELLLLLLLLLLOOOOOOOOOOOOOOOO");
+					if (flights.get(i).getFlightNum().equals(flight.getFlightNum())) {  // not falling into this condition for some reason...
 						flights.remove(i);
 						model.removeRow(i);
 						break;

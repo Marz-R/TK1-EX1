@@ -106,7 +106,7 @@ public class FlightServer implements IFlightServer {
 	public void deleteFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException{
 		if (loggedInClients.contains(client)) {
 			for (int i = 0; i < flights.size(); i++) {
-				if (flights.get(i).getFlightNum() == flight.getFlightNum()) {
+				if (flights.get(i).getFlightNum().equals(flight.getFlightNum())) {
 					flights.remove(i);
 					break;
 				}
