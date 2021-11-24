@@ -11,7 +11,7 @@ For the server:
 For the client:
 > ./gradlew runClientApp
 
-DO NOT RUN BOTH CLIENT AND SERVER ON THE SAME COMMAND PROMPT!
+DO NOT run both server and client on the SAME command prompt!
 
 
 Edit and Create
