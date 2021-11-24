@@ -58,7 +58,7 @@ public class FlightDetailsGUI {
 	private DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	private DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	private Flight tempFlight;
-	private IFlightClient client;
+	private IFlightClient flightClient;
 	private FlightListGUI flightListGUI;
 	
 	private boolean create = false;
@@ -308,9 +308,9 @@ public class FlightDetailsGUI {
 				getEditInput(tempFlight);
 				try {
 					if(create) {
-						client.sendUpdatedFlight(tempFlight, 'C');
+						flightClient.sendUpdatedFlight(tempFlight, 'C');
 					} else {
-						client.sendUpdatedFlight(tempFlight, 'U');
+						flightClient.sendUpdatedFlight(tempFlight, 'U');
 					}
 					
 				} catch (RemoteException e1) {
@@ -558,6 +558,10 @@ public class FlightDetailsGUI {
 		);
 	}
 	
+	public void setFlightClient(IFlightClient flightClient) {
+		this.flightClient = flightClient;
+	}
+	
 	public String stringifyElementsOfList(List<?> list) {
 	    String result = list.stream()
 	      .map(n -> String.valueOf(n))
@@ -576,7 +580,7 @@ public class FlightDetailsGUI {
 		if(arrivalAirportTxtField.getText() == "FRA") {
 			
 			//set arrival details
-			flight.setArrival(LocalDateTime.parse(scheduledArrivalTxtField.getText(), localDateTimeFormatter), Integer.parseInt(arrivalTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedArrivalTxtField.getText(), localDateTimeFormatter));
+			flight.setArrival(LocalDateTime.parse(scheduledArrivalTxtField.getText().replace("", "T"), localDateTimeFormatter), Integer.parseInt(arrivalTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedArrivalTxtField.getText().replace("", "T"), localDateTimeFormatter));
 			
 		} else if(departureAirportTxtField.getText() == "FRA"){
 			
@@ -588,8 +592,8 @@ public class FlightDetailsGUI {
 			}
 			
 			//set departure details
-			flight.setDeparture(LocalDateTime.parse(scheduledDepartureTxtField.getText(), localDateTimeFormatter), Integer.parseInt(departureTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedDepartureTxtField.getText(), localDateTimeFormatter));
-			flight.setCheckIn(checkInLocationTxtField.getText(), counter, LocalDateTime.parse(checkInStartTxtField.getText(), localDateTimeFormatter), LocalDateTime.parse(checkInEndTxtField.getText(), localDateTimeFormatter));
+			flight.setDeparture(LocalDateTime.parse(scheduledDepartureTxtField.getText().replace("", "T"), localDateTimeFormatter), Integer.parseInt(departureTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedDepartureTxtField.getText().replace("", "T"), localDateTimeFormatter));
+			flight.setCheckIn(checkInLocationTxtField.getText(), counter, LocalDateTime.parse(checkInStartTxtField.getText().replace("", "T"), localDateTimeFormatter), LocalDateTime.parse(checkInEndTxtField.getText().replace("", "T"), localDateTimeFormatter));
 			
 		}
 		

@@ -63,20 +63,20 @@ public class FlightListGUI {
 	private void initialize() {
 		// ******************
 		// just for testing function of edit button clicked without dependencies to client and server.
-		Flight flight1 = new Flight("LH1234");
-		List<Integer> counters = Arrays.asList(100, 101, 102, 103, 104, 105);
-		List<String> gates = Arrays.asList("E12", "E13");
-		flight1.setFlightInfo("Lufthansa", "A380", LocalDate.of(2021, 11, 24), "FRA", "HKG");
-		flight1.setDeparture(LocalDateTime.of(2021, 11, 24, 05, 12), 1, gates, LocalDateTime.of(2021, 11, 24, 05, 17));
-		flight1.setCheckIn("3", counters, LocalDateTime.of(2021, 11, 24, 00, 00), LocalDateTime.of(2021, 11, 24, 04, 42));
-		flights.add(flight1);
-		
-		Flight flight2 = new Flight("CX4321");
-		gates = Arrays.asList("A03", "A04");
-		flight2.setFlightInfo("Cathy Pacific", "B747", LocalDate.of(2021, 11, 25), "LAX", "FRA");
-		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, gates, LocalDateTime.of(2021, 11, 25, 15, 43));
-		flight2.setStatus("B");
-		flights.add(flight2);
+//		Flight flight1 = new Flight("LH1234");
+//		List<Integer> counters = Arrays.asList(100, 101, 102, 103, 104, 105);
+//		List<String> gates = Arrays.asList("E12", "E13");
+//		flight1.setFlightInfo("Lufthansa", "A380", LocalDate.of(2021, 11, 24), "FRA", "HKG");
+//		flight1.setDeparture(LocalDateTime.of(2021, 11, 24, 05, 12), 1, gates, LocalDateTime.of(2021, 11, 24, 05, 17));
+//		flight1.setCheckIn("3", counters, LocalDateTime.of(2021, 11, 24, 00, 00), LocalDateTime.of(2021, 11, 24, 04, 42));
+//		flights.add(flight1);
+//		
+//		Flight flight2 = new Flight("CX4321");
+//		gates = Arrays.asList("A03", "A04");
+//		flight2.setFlightInfo("Cathy Pacific", "B747", LocalDate.of(2021, 11, 25), "LAX", "FRA");
+//		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, gates, LocalDateTime.of(2021, 11, 25, 15, 43));
+//		flight2.setStatus("B");
+//		flights.add(flight2);
 		// ******************
 		
 		frmTkAirportArrivals = new JFrame();
@@ -127,8 +127,8 @@ public class FlightListGUI {
 		flightListTable.setModel(new DefaultTableModel(
 			new Object[][] {
 				// initial rows just for testing behaviour when edit button clicked
-				{"LH", "1234", "FRA", "HKG", "1", "2021-11-24 05:12:00", "2021-11-24 05:17:00"},
-				{"CX", "4321", "LAX", "FRA", "1", "2021-11-25 15:43:00", "2021-11-25 15:43:00"}
+//				{"LH", "1234", "FRA", "HKG", "1", "2021-11-24 05:12:00", "2021-11-24 05:17:00"},
+//				{"CX", "4321", "LAX", "FRA", "1", "2021-11-25 15:43:00", "2021-11-25 15:43:00"}
 			},
 			new String[] {
 				"Operating Airline", "Flight Number", "Departure", "Arrival", "Terminal", "Scheduled Time", "Estimated Time"
@@ -148,6 +148,7 @@ public class FlightListGUI {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				FlightDetailsGUI flightDetailsGUI = new FlightDetailsGUI(true);  // open DetailsGUI with create==true flag
+				flightDetailsGUI.setFlightClient(flightClient);
 				flightDetailsGUI.frmFlightDetails.setVisible(true);
 			}
 		});
@@ -160,6 +161,7 @@ public class FlightListGUI {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				FlightDetailsGUI flightDetailsGUI = new FlightDetailsGUI(false, flights.get(selectedRow));  // open DetailsGUI with create==false flag and flight data; assume flights and rows in table have same structure
+				flightDetailsGUI.setFlightClient(flightClient);
 				flightDetailsGUI.frmFlightDetails.setVisible(true);
 			}
 		});

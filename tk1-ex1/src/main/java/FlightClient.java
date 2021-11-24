@@ -7,10 +7,12 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import interfaces.IFlightClient;
 import interfaces.IFlightServer;
 import model.Flight;
+import gui.FlightDetailsGUI;
 import gui.FlightListGUI;
 
 public class FlightClient implements IFlightClient {
@@ -18,7 +20,7 @@ public class FlightClient implements IFlightClient {
 	private static Logger logger = Logger.getLogger(FlightServer.class.getName());
 
 	// ui
-	private FlightListGUI flightListGUI;
+	private FlightListGUI flightListGUI = new FlightListGUI();
 
 	// global state
 	private String clientName;
@@ -69,18 +71,19 @@ public class FlightClient implements IFlightClient {
 		IFlightServer stubServer = (IFlightServer) registry.lookup("FlightServer");
 
 		// client creates a stub of itself to send it to the server
-		//IFlightClient stubClient = (IFlightClient) UnicastRemoteObject.exportObject(this, 0);
+		IFlightClient stubClient = (IFlightClient) UnicastRemoteObject.exportObject(this, 0);
 
 		this.flightServer = stubServer;
 			
-		// calls the remote login method
-		stubServer.login(this.clientName, this);
 		//stubServer.login(this.clientName, stubClient);
 		//flightServer.login(clientName, this);
 		
 		this.flightListGUI = new FlightListGUI();
 		flightListGUI.setFlightClient(this);
 		flightListGUI.frmTkAirportArrivals.setVisible(true);  // start (open) FlightListGUI
+		
+		// calls the remote login method
+		stubServer.login(this.clientName, stubClient);
 	}
 
 	public static void main(String[] args) throws RemoteException, NotBoundException {

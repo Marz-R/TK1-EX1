@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
+import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -126,12 +126,11 @@ public class FlightServer implements IFlightServer {
 		try {
 			// generate local registry
 			FlightServer flightServer = new FlightServer();
-			//IFlightServer stub = (IFlightServer) UnicastRemoteObject.exportObject(flightServer, 0);
+			IFlightServer stub = (IFlightServer) UnicastRemoteObject.exportObject(flightServer, 0);
 
 			// Bind the remote object's stub in the registry
 			Registry registry = LocateRegistry.createRegistry(1099);
-			registry.bind("FlightServer", flightServer);
-
+			registry.bind("FlightServer", stub);
 
 			logger.info("Server is ready");
 		} catch (Exception ex) {
