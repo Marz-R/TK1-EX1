@@ -250,9 +250,22 @@ public class FlightListGUI {
 		 		
 		 		break;
 		 	case 'D':  // delete
-		 		int idx = flights.indexOf(flight);
-		 		flights.remove(idx);
-		 		model.removeRow(idx);  // assume flights and rows in model have same structure
+		 		for (int i = 0; i < flights.size(); i++) {
+		 			System.out.println(flights.get(i).getFlightNum());
+		 			System.out.println(flight.getFlightNum());
+		 			System.out.println(flights.get(i).getFlightNum() == flight.getFlightNum());
+					if (flights.get(i).getFlightNum() == flight.getFlightNum()) {  // not falling into this condition for some reason...
+						System.out.println("HELLLLLLLLLLOOOOOOOOOOOOOOOO");
+						flights.remove(i);
+						model.removeRow(i);
+						break;
+					}
+				}
+//		 		int idx = flights.indexOf(flight);
+//		 		flights.remove(idx);
+//		 		model.removeRow(idx);  // assume flights and rows in model have same structure
+		 		
+		 		break;
 		}
 		
 		model.fireTableDataChanged();

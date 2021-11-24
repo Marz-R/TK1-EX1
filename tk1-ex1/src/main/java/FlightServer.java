@@ -32,15 +32,17 @@ public class FlightServer implements IFlightServer {
 		super();
 		
 		// initialize with some flights
-		Flight flight1 = new Flight("LH1234");
+		Flight flight1 = new Flight();
 		List<Integer> counters = Arrays.asList(100, 101, 102, 103, 104, 105);
 		List<String> gates = Arrays.asList("E12", "E13");
+		flight1.setFlightNum("LH1234");
 		flight1.setFlightInfo("Lufthansa", "A380", LocalDate.of(2021, 11, 24), "FRA", "HKG");
 		flight1.setDeparture(LocalDateTime.of(2021, 11, 24, 05, 12), 1, gates, LocalDateTime.of(2021, 11, 24, 05, 17));
 		flight1.setCheckIn("3", counters, LocalDateTime.of(2021, 11, 24, 00, 00), LocalDateTime.of(2021, 11, 24, 04, 42));
 		
-		Flight flight2 = new Flight("CX4321");
+		Flight flight2 = new Flight();
 		gates = Arrays.asList("A03", "A04");
+		flight2.setFlightNum("CX4321");
 		flight2.setFlightInfo("Cathy Pacific", "B747", LocalDate.of(2021, 11, 25), "LAX", "FRA");
 		flight2.setArrival(LocalDateTime.of(2021, 11, 25, 15, 43), 1, gates, LocalDateTime.of(2021, 11, 25, 15, 43));
 		flight2.setStatus("B");
@@ -103,7 +105,13 @@ public class FlightServer implements IFlightServer {
 	@Override
 	public void deleteFlight(String clientName, IFlightClient client, Flight flight) throws RemoteException{
 		if (loggedInClients.contains(client)) {
-			flights.remove(flights.indexOf(flight));
+			for (int i = 0; i < flights.size(); i++) {
+				if (flights.get(i).getFlightNum() == flight.getFlightNum()) {
+					flights.remove(i);
+					break;
+				}
+			}
+//			flights.remove(flights.indexOf(flight));
 			
 			logger.log(Level.INFO, "Deleted flight: " + flight.toString() + "by " + clientName);
 			informAllClients(flight, 'D');

@@ -577,12 +577,12 @@ public class FlightDetailsGUI {
 		//set flight basic info
 		flight.setFlightInfo(operatingAirlineTxtField.getText(), aircraftModelNameTxtField.getText(), LocalDate.parse(originDateTxtField.getText(), localDateFormatter), departureAirportTxtField.getText(), arrivalAirportTxtField.getText());
 		
-		if(arrivalAirportTxtField.getText() == "FRA") {
+		if(arrivalAirportTxtField.getText() == "TK") {  // this is a flight arriving to TK airport
 			
 			//set arrival details
 			flight.setArrival(LocalDateTime.parse(scheduledArrivalTxtField.getText().replace("", "T"), localDateTimeFormatter), Integer.parseInt(arrivalTerminalTxtField.getText()), Arrays.asList(departureGatesTxtField.getText().split(",")), LocalDateTime.parse(estimatedArrivalTxtField.getText().replace("", "T"), localDateTimeFormatter));
 			
-		} else if(departureAirportTxtField.getText() == "FRA"){
+		} else if(departureAirportTxtField.getText() == "TK") {  // this is a flight departing from TK airport
 			
 			//to convert string to list<integer>
 			Scanner scanner = new Scanner(checkInCounterTxtField.getText());
