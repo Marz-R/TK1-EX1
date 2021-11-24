@@ -125,14 +125,18 @@ public class FlightServer implements IFlightServer {
 	public static void main(String[] args) {
 		try {
 			// generate local registry
-			//Registry registry = LocateRegistry.getRegistry(); 
-			//registry.bind("FlightServer", new FlightServer());
-			Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT); 
-			registry.rebind("FlightServer", new FlightServer());
+			FlightServer flightServer = new FlightServer();
+			//IFlightServer stub = (IFlightServer) UnicastRemoteObject.exportObject(flightServer, 0);
+
+			// Bind the remote object's stub in the registry
+			Registry registry = LocateRegistry.createRegistry(1099);
+			registry.bind("FlightServer", flightServer);
+
 
 			logger.info("Server is ready");
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, "Server exception", ex);
+			ex.printStackTrace();
 		}
 	}
 
