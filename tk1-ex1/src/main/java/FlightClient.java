@@ -62,24 +62,21 @@ public class FlightClient implements IFlightClient {
 	
 	public void startup() throws RemoteException, NotBoundException {
 		logger.log(Level.INFO, "Client start up");
-		try {
-			// get the servers stub
-			//Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
-			//IFlightServer flightServer = (IFlightServer) registry.lookup("FlightServer");
-			Registry registry = LocateRegistry.getRegistry();
-			IFlightServer stubServer = (IFlightServer) registry.lookup("FlightServer");
+		// get the servers stub
+		//Registry registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
+		//IFlightServer flightServer = (IFlightServer) registry.lookup("FlightServer");
+		Registry registry = LocateRegistry.getRegistry();
+		IFlightServer stubServer = (IFlightServer) registry.lookup("FlightServer");
 
-			// client creates a stub of itself to send it to the server
-			//IFlightClient stubClient = (IFlightClient) UnicastRemoteObject.exportObject(this, 0);
+		// client creates a stub of itself to send it to the server
+		//IFlightClient stubClient = (IFlightClient) UnicastRemoteObject.exportObject(this, 0);
 
-			this.flightServer = stubServer;
+		this.flightServer = stubServer;
 			
-			// calls the remote login method
-			stubServer.login(this.clientName, this);
-			
-		} catch(Exception e){
-			logger.log(Level.SEVERE, "Client exception", e);
-		}
+		// calls the remote login method
+		stubServer.login(this.clientName, this);
+		//stubServer.login(this.clientName, stubClient);
+		//flightServer.login(clientName, this);
 		
 		this.flightListGUI = new FlightListGUI();
 		flightListGUI.setFlightClient(this);
